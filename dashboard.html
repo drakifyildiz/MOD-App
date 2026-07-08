@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#000000">
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="apple-touch-icon" href="logo.png">
+
+    <title>MOD App | Dönem 2 Merkezi</title>
+    <style>
+        :root {
+            --bg-dark: #000000;
+            --text-main: #E5E5E5;
+            --text-sec: #A1A1AA;
+            --mod-accent: #0a9396;
+            --mod-deep: #005f73;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            /* Dokunmatik ekranlarda mavi tıklama efektini kaldırır (Uygulama hissi) */
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* 2. ÖZEL KAYDIRMA ÇUBUĞU (CUSTOM SCROLLBAR) */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* 3. PÜRÜZSÜZ SAYFA GEÇİŞİ ANİMASYONU (FADE-IN / FADE-OUT) */
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 20px 20px 80px 20px;
+            overflow-x: hidden;
+            position: relative;
+            animation: fadeIn 0.6s ease-in-out;
+            opacity: 1;
+        }
+
+        body.fade-out {
+            opacity: 0 !important;
+            transition: opacity 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* KUZEY IŞIKLARI (AURA) */
+        .aura-1 {
+            position: fixed;
+            top: -10%; left: -10%;
+            width: 120%; height: 60vh;
+            background: var(--mod-accent);
+            filter: blur(140px);
+            opacity: 0.25; 
+            transform: rotate(-10deg);
+            animation: wave 12s infinite alternate cubic-bezier(0.25, 1, 0.5, 1);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .aura-2 {
+            position: fixed;
+            bottom: -10%; right: -10%;
+            width: 120%; height: 60vh;
+            background: var(--mod-deep);
+            filter: blur(160px);
+            opacity: 0.30;
+            transform: rotate(10deg);
+            animation: wave-reverse 15s infinite alternate cubic-bezier(0.25, 1, 0.5, 1);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        @keyframes wave {
+            0% { transform: rotate(-10deg) translateY(0) scale(1); }
+            100% { transform: rotate(-5deg) translateY(-40px) scale(1.1); }
+        }
+
+        @keyframes wave-reverse {
+            0% { transform: rotate(10deg) translateY(0) scale(1); }
+            100% { transform: rotate(15deg) translateY(40px) scale(1.1); }
+        }
+
+        /* Navigasyon */
+        header {
+            position: relative;
+            z-index: 10;
+            max-width: 900px;
+            margin: 0 auto 40px auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-links { display: flex; gap: 20px; }
+
+        .quick-link {
+            text-decoration: none;
+            color: var(--text-sec);
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 10px 16px;
+            border-radius: 20px;
+            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .quick-link:hover {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .logout-btn {
+            background: transparent;
+            color: var(--text-sec);
+            border: none;
+            font-size: 14px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .logout-btn:hover { color: var(--text-main); }
+
+        /* Ana İçerik Konteyneri */
+        .main-container {
+            position: relative;
+            z-index: 10;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .hero-title {
+            font-size: 42px;
+            font-weight: 700;
+            letter-spacing: -1px;
+            text-align: center;
+            margin-bottom: 8px;
+            color: var(--text-main);
+        }
+
+        .hero-subtitle {
+            text-align: center;
+            color: var(--text-sec);
+            font-size: 15px;
+            margin-bottom: 50px;
+            letter-spacing: 0.5px;
+        }
+
+        /* POMODORO SAYAÇ */
+        .pomodoro-container {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 450px;
+            margin: 0 auto 50px auto;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .pomodoro-container:hover {
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), inset 0 0 20px rgba(10, 147, 150, 0.05);
+        }
+
+        .timer-display {
+            font-size: 48px;
+            font-weight: 200;
+            color: var(--text-main);
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .timer-controls { 
+            display: flex; 
+            gap: 10px; 
+            flex-wrap: wrap; 
+            justify-content: center; 
+        }
+
+        .timer-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-sec);
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+        }
+
+        .timer-btn:hover {
+            background: var(--mod-deep);
+            color: var(--text-main);
+            border-color: var(--mod-accent);
+            transform: translateY(-2px);
+        }
+        
+        /* Mola ve Durdur Butonları Özel Hover Efektleri */
+        .break-btn:hover { 
+            background: rgba(52, 199, 89, 0.15) !important; 
+            color: #34C759 !important; 
+            border-color: #34C759 !important; 
+        }
+        .stop-btn:hover { 
+            background: rgba(255, 59, 48, 0.15) !important; 
+            color: #FF3B30 !important; 
+            border-color: #FF3B30 !important; 
+        }
+
+        /* Komiteler Izgarası */
+        .section-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-sec);
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+        }
+
+        .committee-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 24px;
+            text-decoration: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+            position: relative;
+            overflow: hidden;
+            border-left: 4px solid var(--mod-deep);
+        }
+
+        .committee-card:hover {
+            transform: translateY(-6px);
+            border-left-color: var(--mod-accent);
+            background: rgba(255, 255, 255, 0.06);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+        }
+
+        .committee-card h2 {
+            font-size: 18px;
+            font-weight: 500;
+            color: var(--text-main);
+        }
+
+        .arrow {
+            color: var(--text-sec);
+            font-size: 20px;
+            transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .committee-card:hover .arrow {
+            transform: translateX(6px);
+            color: var(--mod-accent);
+        }
+
+        .final-card {
+            border-left-color: #86868B;
+            grid-column: 1 / -1;
+            justify-content: center;
+            padding: 24px;
+        }
+        
+        .final-card:hover { border-left-color: var(--text-main); }
+
+        /* İMZA */
+        .designer-signature {
+            margin-top: 80px;
+            text-align: center;
+            font-size: 11px;
+            color: var(--text-sec);
+            opacity: 0.5;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+    <div class="aura-1"></div>
+    <div class="aura-2"></div>
+
+    <header>
+        <div class="nav-links">
+            <a href="https://open.spotify.com/" target="_blank" class="quick-link">
+                🎧 Odak Müzikleri
+            </a>
+            <a href="https://www.chess.com" target="_blank" class="quick-link">
+                ♟️ Chess.com
+            </a>
+        </div>
+        <button class="logout-btn smooth-link" data-target="login.html">Çıkış Yap</button>
+    </header>
+
+    <div class="main-container">
+        <h1 class="hero-title">MOD DÖNEM 2</h1>
+        <p class="hero-subtitle">Modern Doktorlar Birliği Çalışma Portalı</p>
+
+        <div class="pomodoro-container">
+            <div class="timer-display" id="timeDisplay">00:00</div>
+            <div class="timer-controls">
+                <button class="timer-btn" onclick="startTimer(25)">25 Dk Odak</button>
+                <button class="timer-btn" onclick="startTimer(50)">50 Dk Deep Work</button>
+                <button class="timer-btn break-btn" onclick="startTimer(10)">10 Dk Mola</button>
+                <button class="timer-btn stop-btn" onclick="stopTimer()">Durdur</button>
+            </div>
+        </div>
+
+        <div class="section-title">Eğitim Modülleri</div>
+        <div class="grid-container" id="committeeGrid">
+            <a href="committee.html?id=1" class="committee-card smooth-link">
+                <h2>Komite 1</h2>
+                <span class="arrow">→</span>
+            </a>
+            <a href="committee.html?id=2" class="committee-card smooth-link">
+                <h2>Komite 2</h2>
+                <span class="arrow">→</span>
+            </a>
+            <a href="committee.html?id=3" class="committee-card smooth-link">
+                <h2>Komite 3</h2>
+                <span class="arrow">→</span>
+            </a>
+            <a href="committee.html?id=4" class="committee-card smooth-link">
+                <h2>Komite 4</h2>
+                <span class="arrow">→</span>
+            </a>
+            <a href="committee.html?id=5" class="committee-card smooth-link">
+                <h2>Komite 5</h2>
+                <span class="arrow">→</span>
+            </a>
+            <a href="committee.html?id=6" class="committee-card smooth-link">
+                <h2>Komite 6</h2>
+                <span class="arrow">→</span>
+            </a>
+            <a href="committee.html?id=final" class="committee-card final-card smooth-link">
+                <h2>DÖNEM SONU FİNALİ</h2>
+            </a>
+        </div>
+
+        <div class="designer-signature">
+            Designed & Engineered by Muhammed Akif Yıldız
+        </div>
+    </div>
+
+    <script>
+        // PÜRÜZSÜZ SAYFA GEÇİŞİ MOTORU (Fade-in / Fade-out)
+        document.addEventListener("DOMContentLoaded", () => {
+            const smoothLinks = document.querySelectorAll(".smooth-link");
+            
+            smoothLinks.forEach(link => {
+                link.addEventListener("click", (e) => {
+                    e.preventDefault(); 
+                    const target = link.getAttribute("href") || link.getAttribute("data-target");
+                    document.body.classList.add("fade-out");
+                    setTimeout(() => {
+                        window.location.href = target;
+                    }, 400);
+                });
+            });
+        });
+
+        // Pomodoro Sayaç Sistemi
+        let timerInterval;
+        let timeLeft = 0;
+
+        function startTimer(minutes) {
+            clearInterval(timerInterval);
+            timeLeft = minutes * 60;
+            updateDisplay();
+            
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateDisplay();
+                
+                if(timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    document.getElementById('timeDisplay').innerText = "BİTTİ";
+                }
+            }, 1000);
+        }
+
+        // Sayacı Durdurma Fonksiyonu
+        function stopTimer() {
+            clearInterval(timerInterval);
+            timeLeft = 0;
+            document.getElementById('timeDisplay').innerText = "00:00";
+        }
+
+        function updateDisplay() {
+            let m = Math.floor(timeLeft / 60);
+            let s = timeLeft % 60;
+            document.getElementById('timeDisplay').innerText = 
+                `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        }
+
+        // PWA Service Worker Kurulumu (Uygulama Hissi İçin)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').then(reg => {
+                    console.log('Service Worker bağlandı!', reg);
+                }).catch(err => {
+                    console.log('Service Worker hatası:', err);
+                });
+            });
+        }
+    </script>
+</body>
+</html>

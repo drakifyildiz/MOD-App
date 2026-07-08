@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MOD App | Komite Odası</title>
+    <style>
+        :root {
+            --bg-dark: #000000;
+            --text-main: #E5E5E5;
+            --text-sec: #A1A1AA;
+            --mod-accent: #0a9396;
+            --mod-deep: #005f73;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+
+        body { 
+            background-color: var(--bg-dark); 
+            color: var(--text-main); 
+            min-height: 100vh; 
+            padding: 40px 20px 80px 20px; 
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* 1. KUZEY IŞIKLARI (AURA) - Kesintisiz Deneyim */
+        .aura-1 {
+            position: fixed;
+            top: -10%; left: -10%;
+            width: 120%; height: 60vh;
+            background: var(--mod-accent);
+            filter: blur(140px);
+            opacity: 0.20;
+            transform: rotate(-10deg);
+            animation: wave 12s infinite alternate cubic-bezier(0.25, 1, 0.5, 1);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .aura-2 {
+            position: fixed;
+            bottom: -10%; right: -10%;
+            width: 120%; height: 60vh;
+            background: var(--mod-deep);
+            filter: blur(160px);
+            opacity: 0.25;
+            transform: rotate(10deg);
+            animation: wave-reverse 15s infinite alternate cubic-bezier(0.25, 1, 0.5, 1);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        @keyframes wave {
+            0% { transform: rotate(-10deg) translateY(0) scale(1); }
+            100% { transform: rotate(-5deg) translateY(-40px) scale(1.1); }
+        }
+
+        @keyframes wave-reverse {
+            0% { transform: rotate(10deg) translateY(0) scale(1); }
+            100% { transform: rotate(15deg) translateY(40px) scale(1.1); }
+        }
+
+        /* 2. ANA KONTEYNER VE BUTONLAR */
+        .main-container {
+            position: relative;
+            z-index: 10;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .back-btn { 
+            background: rgba(255, 255, 255, 0.03); 
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.08); 
+            color: var(--text-sec); 
+            padding: 12px 24px; 
+            border-radius: 20px; 
+            font-size: 14px; 
+            font-weight: 500;
+            cursor: pointer; 
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1); 
+            margin-bottom: 40px; 
+        }
+
+        .back-btn:hover { 
+            color: var(--text-main); 
+            background: rgba(255, 255, 255, 0.08); 
+            transform: translateX(-4px);
+        }
+
+        .header-section { text-align: center; margin-bottom: 50px; }
+        
+        .committee-title { 
+            font-size: 42px; 
+            font-weight: 700;
+            letter-spacing: -1px;
+            margin-bottom: 8px; 
+            color: var(--text-main); 
+        }
+        
+        #pageDesc { color: var(--text-sec); font-size: 15px; margin-bottom: 4px; }
+        #pageDate { color: var(--mod-accent); font-size: 13px; font-weight: 500; letter-spacing: 1px; }
+
+        /* 3. DERS AKORDİYONLARI (GLASSMORPHISM) */
+        .lessons-container { display: flex; flex-direction: column; gap: 16px; }
+        
+        .lesson-item { 
+            background: rgba(255, 255, 255, 0.03); 
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.08); 
+            border-radius: 20px; 
+            overflow: hidden; 
+            border-left: 4px solid var(--mod-deep);
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .lesson-item:hover {
+            border-left-color: var(--mod-accent);
+            background: rgba(255, 255, 255, 0.06);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .lesson-header { 
+            padding: 24px; 
+            cursor: pointer; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .lesson-header .arrow-icon {
+            color: var(--text-sec);
+            font-size: 16px;
+            transition: transform 0.4s ease;
+        }
+
+        .lesson-item.active .lesson-header .arrow-icon {
+            transform: rotate(180deg);
+            color: var(--mod-accent);
+        }
+
+        /* 4. DERS İÇERİK LİNKLERİ */
+        .lesson-content { 
+            display: none; 
+            padding: 0 24px 24px 24px; 
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); 
+            gap: 12px; 
+        }
+        
+        .lesson-item.active .lesson-content { display: grid; }
+        
+        .resource-link { 
+            background: rgba(0, 0, 0, 0.3); 
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 16px; 
+            border-radius: 14px; 
+            text-decoration: none; 
+            color: var(--text-sec); 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            gap: 8px; 
+            text-align: center; 
+            font-size: 14px;
+            transition: all 0.3s ease; 
+        }
+        
+        .resource-link:hover { 
+            background: var(--mod-deep); 
+            color: #FFF;
+            border-color: var(--mod-accent);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(10, 147, 150, 0.2);
+        }
+
+        /* FİNAL ÖZEL BUTONLARI */
+        .final-resource {
+            padding: 24px;
+            font-size: 16px;
+            font-weight: 500;
+            border-left: 4px solid var(--mod-accent);
+        }
+
+        /* RESMİ İMZA */
+        .designer-signature {
+            margin-top: 80px;
+            text-align: center;
+            font-size: 11px;
+            color: var(--text-sec);
+            opacity: 0.5;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+    <div class="aura-1"></div>
+    <div class="aura-2"></div>
+
+    <div class="main-container">
+        <a href="dashboard.html" class="back-btn">← Ana Merkeze Dön</a>
+        
+        <div class="header-section">
+            <h1 class="committee-title" id="pageTitle">Yükleniyor...</h1>
+            <p id="pageDesc"></p>
+            <p id="pageDate"></p>
+        </div>
+
+        <div class="lessons-container" id="lessonsContainer"></div>
+
+        <div class="designer-signature">
+            Designed & Engineered by Muhammed Akif Yıldız
+        </div>
+    </div>
+
+    <script>
+        const committeeData = {
+            "1": { title: "TIP 201: Komite 1", desc: "Doku-İskelet, Periferik Sinir Sistemi", date: "17 Ekim 2026", lessons: [
+                { name: "Anatomi", icon: "🦴", links: { ozet: "https://drive.google.com/drive/folders/1KuaRJv7zmhL4WLdT8VpAhPRfCD5FjdwO", test: "https://drive.google.com/drive/folders/1kProygTRFngB6_jm9U3b1Bv2Jkzu-WwE", ai: "https://drive.google.com/drive/folders/1rOcVkWc5E1SkrE-akVoOni-lc4cdXsrp", slayt: "https://drive.google.com/drive/folders/1ApTescXPWScVLupyx9MRHSKRhETiKm2I" } },
+                { name: "Biyofizik", icon: "⚡", links: { ozet: "https://drive.google.com/drive/folders/1bTylvmxbFI6hTelVFE6wciQDT9_NsltR", test: "https://drive.google.com/drive/folders/1WxurW20jp3G8HD_z_ycHGYFEf2wbV31r", ai: "https://drive.google.com/drive/folders/1X1o-_UXkC1oz6dNLlI_3OfR4eddeN3-p", slayt: "https://drive.google.com/drive/folders/1TfV0CGGdTB5QX3o-n4irrdb-OeGH8O-m" } },
+                { name: "Biyokimya", icon: "🧪", links: { ozet: "https://drive.google.com/drive/folders/1SMdYB8Ha1L4unK-vB0VAtsk7EtikTtna", test: "https://drive.google.com/drive/folders/1O13HAGeIBGjViPC63Jc9oOdHs19Ppf7t", ai: "https://drive.google.com/drive/folders/1ra3PJTDZk1fdu81XjiaFmIDDSULO3K2T", slayt: "https://drive.google.com/drive/folders/14UstA88RkP2LyuPHWRKiaNf0sRCNHh91" } },
+                { name: "Fizyoloji", icon: "🫀", links: { ozet: "https://drive.google.com/drive/folders/1gng_705nD0A-xE3TjLtBg232cj2X9_gB", test: "https://drive.google.com/drive/folders/12y7YuIwCzTfkZq7KQ5ZxNIWBde5VvCvV", ai: "https://drive.google.com/drive/folders/1vUH0_GC31qL6HSdMFgjMCVqSS0RdC6kb", slayt: "https://drive.google.com/drive/folders/1IvbTrtXoAAl1UKde0LWM_a8O5tV0jGkU" } },
+                { name: "Histoloji", icon: "🔬", links: { ozet: "https://drive.google.com/drive/folders/1d4k_uN7vDVKWizj9PAj8uMGTOLOd0PFu", test: "https://drive.google.com/drive/folders/1HWCANy6s3SXwqbvjg2O6_1OUMdRbSZFC", ai: "https://drive.google.com/drive/folders/197yDONan5Owetfpz2_l5zq8ptGq7blzs", slayt: "https://drive.google.com/drive/folders/1iRwHAldzPe4mTU7bTxn_jlWnC6WV3A9B" } }
+            ]},
+            "2": { title: "TIP 202: Komite 2", desc: "Dolaşım, Kan ve Solunum", date: "12 Aralık 2026", lessons: [
+                { name: "Anatomi", icon: "🦴", links: { ozet: "https://drive.google.com/drive/folders/1iUeF6N0YPMkYXe_PjbM7XcMd2pPaxIXz", test: "https://drive.google.com/drive/folders/1s7TbcP8IlgRWysY5v2yOauM_P3vi1eL6", ai: "https://drive.google.com/drive/folders/1yy5qDBJYMYf8PtQodtjDlufYJTsTZr4g", slayt: "https://drive.google.com/drive/folders/1M7gGidGy5arP1PmShFaWg0mUzTmpJFvJ" } },
+                { name: "Biyofizik", icon: "⚡", links: { ozet: "https://drive.google.com/drive/folders/1uxErwss38otBneuNpbosLk1tf_kPXTqP", test: "https://drive.google.com/drive/folders/1CJuc9SxA0qcQftc1IYIJGJMT6LlOUbhr", ai: "https://drive.google.com/drive/folders/1q3WaoMUtsn8igJuns_tVUASXD4zdoCSL", slayt: "https://drive.google.com/drive/folders/14fwRNw7-gGaFoLV_t7-ngT2onF0gFKLs" } },
+                { name: "Biyokimya", icon: "🧪", links: { ozet: "https://drive.google.com/drive/folders/1FVZ8xSlu3-kANHfobUHuFnnIksrSGmK_", test: "https://drive.google.com/drive/folders/1mBRGM0b7XHqPKtQXzOpaQzsRLljUawpk", ai: "https://drive.google.com/drive/folders/1fxKQliY5qvzN4ZYTwz8zFS87Gxz3zK5z", slayt: "https://drive.google.com/drive/folders/1BizEYPNcZ2h3Yr2LCugGvzSD7WtdaF2R" } },
+                { name: "Fizyoloji", icon: "🫀", links: { ozet: "https://drive.google.com/drive/folders/1O1rnKeiqMxn3Ivxj_tIy2BVnAQsWTy8n", test: "https://drive.google.com/drive/folders/1nQQKCYG03ARjyGX8OykC8cG2zD52z9Pf", ai: "https://drive.google.com/drive/folders/1PSlo4JS9sYqRpFxYZAHIVzvYJwfmFF4u", slayt: "https://drive.google.com/drive/folders/15jLdpIpSDm4m8gQ8olN1dDl1MOxTHt3K" } },
+                { name: "Histoloji", icon: "🔬", links: { ozet: "https://drive.google.com/drive/folders/1bDEJ-s8_PJgfCEjkhurowm6wW1B-PUqN", test: "https://drive.google.com/drive/folders/1gW1NFHwDPO_Y5p-jkT7IioLeO9xickwm", ai: "https://drive.google.com/drive/folders/1X-ZctPdBzmEcrXkRMptKJJ7adZRbCC6Y", slayt: "https://drive.google.com/drive/folders/1zMmcUXcT2oDIeL291dBc6xwwLaciFPh_" } }
+            ]},
+            "3": { title: "TIP 203: Komite 3", desc: "Gastrointestinal Sistem", date: "16 Ocak 2027", lessons: [
+                { name: "Anatomi", icon: "🦴", links: { ozet: "https://drive.google.com/drive/folders/14nGG7Z7-jPd9Gw23uXe9LEFeCAiX3CKs", test: "https://drive.google.com/drive/folders/18pwDZOYiqjNRWhoY6e5-fwYRVzqthhFq", ai: "https://drive.google.com/drive/folders/17jZp-wfFm7NBilzeYLL4Ma9SAXRAFsjo", slayt: "https://drive.google.com/drive/folders/1sQBcxUf5w2ldS26jDiLNd-TLQFtiXPIx" } },
+                { name: "Biyokimya", icon: "🧪", links: { ozet: "https://drive.google.com/drive/folders/16lQ6TEBqR3JKhkBPCKpv83swKVsVI5_j", test: "https://drive.google.com/drive/folders/1b51fn33ZHdSjiVChKpG_wGUHYTZO9UVg", ai: "https://drive.google.com/drive/folders/1ZZe2HNLjFHnGV0C1r21aiCoN8_GhhSO9", slayt: "https://drive.google.com/drive/folders/11kynlVFSQ8lXWn9Vn3dWh7OYEI4kNMny" } },
+                { name: "Fizyoloji", icon: "🫀", links: { ozet: "https://drive.google.com/drive/folders/1H4CzpyT-rvS49YHwMtEWbOmivC1h3ELL", test: "https://drive.google.com/drive/folders/17fRhUVAbCB3zCAFle0K-r85fa3fWmw_0", ai: "https://drive.google.com/drive/folders/1jlZkUHN51jtvdjL4nnVpXsf6wyXOcfou", slayt: "https://drive.google.com/drive/folders/1y7KChlF6yae1TXrm6PWq6ynMJ61BTeSC" } },
+                { name: "Histoloji", icon: "🔬", links: { ozet: "https://drive.google.com/drive/folders/1mh8VLRAP1xWaFUrmQiPMOhkHqXyEciN_", test: "https://drive.google.com/drive/folders/1MCYrJAiAbYFfLjLWMHTSBzol6Jm8flWb", ai: "https://drive.google.com/drive/folders/17Ubs38SugI8UU1OH9Dt-EJlfplAXmVH5", slayt: "https://drive.google.com/drive/folders/1_o2KAdNR3lAtS3kiDDUaFvRmz42-6KcV" } }
+            ]},
+            "4": { title: "TIP 204: Komite 4", desc: "Sinir Sistemi", date: "18 Mart 2027", lessons: [
+                { name: "Anatomi", icon: "🦴", links: { ozet: "https://drive.google.com/drive/folders/1O0aAjDMoKfzmRwFTYORt2QPo0mGDuqoQ", test: "https://drive.google.com/drive/folders/1YBy3bv29T0hxsrj_bqKnpvlGQSEc5snp", ai: "https://drive.google.com/drive/folders/15xvmyz31_exmQTM2SUD51w0mfrUkmVBu", slayt: "https://drive.google.com/drive/folders/1XiHxVte3VaS77-jKMPbqFuqZHVTjZL6-" } },
+                { name: "Biyofizik", icon: "⚡", links: { ozet: "https://drive.google.com/drive/folders/19Nzt2NKDc8LfdSp4WciW-D-TTZjKqFZW", test: "https://drive.google.com/drive/folders/1c_0zU9uvU2OFdXZ9uxBOZ8tpl1CQphs0", ai: "https://drive.google.com/drive/folders/1tAv45yDj_8ca-dyq2xAf8CBxDKUmlDov", slayt: "https://drive.google.com/drive/folders/1ob8LVLxFQOz_RNSc5sRl9C-6R1Yy9bs9" } },
+                { name: "Biyokimya", icon: "🧪", links: { ozet: "https://drive.google.com/drive/folders/1qed7uM0HBHHgrKUUVKXO8ztddKWauWIN", test: "https://drive.google.com/drive/folders/1tm1WP6BILb6Uk01XdRwYRnuJ5QOPvzSW", ai: "https://drive.google.com/drive/folders/1iaE81nk5m0fY_pEWEwp0TtHKbU3toJnv", slayt: "https://drive.google.com/drive/folders/1UdNnbOFcHzKf3uVhmZ-j2d-ME8iAOfsr" } },
+                { name: "Fizyoloji", icon: "🫀", links: { ozet: "https://drive.google.com/drive/folders/1op1YuogjfX1T_Yh1fCsBo9MQfRUSRS35", test: "https://drive.google.com/drive/folders/1JHdSrQerNzSEF-sJE38HXVzqmQFF6_d2", ai: "https://drive.google.com/drive/folders/1o7oRqYAg6pjqgGGdsQN6zfnlfF4muiNo", slayt: "https://drive.google.com/drive/folders/1vk-xxS5gDTd_OZsIcE1N2V-1Gy9RZNfN" } },
+                { name: "Histoloji", icon: "🔬", links: { ozet: "https://drive.google.com/drive/folders/1Kq--DWI8cAyaeSdGrSaPj5K5iWKEF_g3", test: "https://drive.google.com/drive/folders/14yGTnqbCyIRlH_1OPrgMgimbyQaMGZcj", ai: "https://drive.google.com/drive/folders/1xhR5bkYMtVkjySO-NK7Nhymdh8Vb23cR", slayt: "https://drive.google.com/drive/folders/1ECVJjvypaHdMH5GI0JliTBoef8vsjmpn" } }
+            ]},
+            "5": { title: "TIP 205: Komite 5", desc: "Endokrin Sistemi", date: "22 Mayıs 2027", lessons: [
+                { name: "Anatomi", icon: "🦴", links: { ozet: "https://drive.google.com/drive/folders/1bsu238ejkkL3xwBUhkmYcYKPBYYwd1rz", test: "https://drive.google.com/drive/folders/1pYOmhyK9E28HToP8Jgc7rYe0w98yk2dO", ai: "https://drive.google.com/drive/folders/10Qo7jkWoTo5N_OnaxAyQjbSzLzvzCtIZ", slayt: "https://drive.google.com/drive/folders/1r-wKastY5HYqH0P3Aekun9HcpmQa-m41" } },
+                { name: "Biyokimya", icon: "🧪", links: { ozet: "https://drive.google.com/drive/folders/1yhWP6tKFLFfQ9HsWqzFcDsdqqqy3w2T6", test: "https://drive.google.com/drive/folders/18n2V6soEFm2ZJs-YQquXfszjM3mzOaMc", ai: "https://drive.google.com/drive/folders/1FipyHfkmTYfNLX1bhmhPWIWPhkzjAP1N", slayt: "https://drive.google.com/drive/folders/1bsUOTKa4UTNsM-txvB1C3-EqLG0QN4vt" } },
+                { name: "Fizyoloji", icon: "🫀", links: { ozet: "https://drive.google.com/drive/folders/15OMf2mZvK5MQtZqznY_Yd3Cv8ofvN7zp", test: "https://drive.google.com/drive/folders/1-1Sq4gwnwgL3fMtpSZ44A0U1bsuvnHCK", ai: "https://drive.google.com/drive/folders/15gHnM4v2qOuuL1VHr2jaKDAuppyBGIlJ", slayt: "https://drive.google.com/drive/folders/18TtDV1Mkyt5uK4_8HrZtHz-4ICRCGr2l" } },
+                { name: "Histoloji", icon: "🔬", links: { ozet: "https://drive.google.com/drive/folders/1dB7ZK7u7yvZWX2XgkxTC9bLf7BxHS57P", test: "https://drive.google.com/drive/folders/1HD8Kpl950xPkV3SCr4C0LTRnTGP0dDQl", ai: "https://drive.google.com/drive/folders/1M_CVrmRzjxIFkM3ofNVJe4xOIMVeZc15", slayt: "https://drive.google.com/drive/folders/1mabvfSfoaAGeBTmP66FgMtbxMqgyRBUo" } }
+            ]},
+            "6": { title: "TIP 206: Komite 6", desc: "Hastalıkların Temeli", date: "05 Haziran 2027", lessons: [
+                { name: "Biyofizik", icon: "⚡", links: { ozet: "https://drive.google.com/drive/folders/1wGhdT9i4FgE9uLMJzUTbCY9OHTVi7rTH", test: "https://drive.google.com/drive/folders/1E9nrhLheSpU3ZM0UQyLnNEAo9ozBXSbf", ai: "https://drive.google.com/drive/folders/1si91R8LBeyErIoKA5R50Tc8uIHUMbLO-", slayt: "https://drive.google.com/drive/folders/1n4Z4X9wdRXbPqO647jpYbEgIUJKqmjLT" } },
+                { name: "Biyokimya", icon: "🧪", links: { ozet: "https://drive.google.com/drive/folders/1aSadK4mNPpNinCB5JXoLYPDW-MBm5CJB", test: "https://drive.google.com/drive/folders/1DEe1wQvFb_fwLH2GiYKjbZI7H32Cn-tR", ai: "https://drive.google.com/drive/folders/1t07fIXc0fslwLwmQL8jTqS5FWs8UAMYd", slayt: "https://drive.google.com/drive/folders/1sgLKMj1mKTB-_C5xcDHYH14vWjuGMVnu" } },
+                { name: "Mikrobiyoloji", icon: "🧫", links: { ozet: "https://drive.google.com/drive/folders/1v0mFxL9tiXYIsuEoy6-IiIUADAxz_piO", test: "https://drive.google.com/drive/folders/1TyVJ84j_hRqlklO5P97jSi-NDeHw2_Lk", ai: "https://drive.google.com/drive/folders/1QEl-FNDn4DjizNk4GhUyE2haMJTpKVKU", slayt: "https://drive.google.com/drive/folders/1AxxWIP9ElXOJHDWrrTIrfwfKIBFyss4a" } },
+                { name: "Ruh Sağlığı", icon: "🧠", links: { ozet: "https://drive.google.com/drive/folders/13W3dXemIk3BxNgTQITDw88WUH_HRF1ku", test: "https://drive.google.com/drive/folders/1e6K4oQkcoPmPgUQ5ksIOdyE0YuK6BpVL", ai: "https://drive.google.com/drive/folders/1h4N_CIHQoRUpy3_TfYf2MM3rNZ3ShMQy", slayt: "https://drive.google.com/drive/folders/13RfQedAIZ8nobVd8yjq-BF6Yhqjo85SC" } }
+            ]},
+            "final": { title: "TIP 207: FİNAL", desc: "Genel Değerlendirme", diamondLink: "https://drive.google.com/drive/folders/1qoLaPigrytjmXoS4x6-u6qYBZkJjoFcT", modFinalLink: "https://drive.google.com/drive/folders/1x_KLK1gVU31Zn8riNJ7EysACRvM7gVj_" }
+        };
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const committeeId = urlParams.get('id');
+        const data = committeeData[committeeId];
+
+        window.onload = () => {
+            if(!data) { document.getElementById('pageTitle').innerText = "Hata: Komite Bulunamadı!"; return; }
+            
+            document.getElementById('pageTitle').innerText = data.title;
+            document.getElementById('pageDesc').innerText = data.desc;
+            document.getElementById('pageDate').innerText = data.date ? "Sınav Tarihi: " + data.date : "";
+
+            const container = document.getElementById('lessonsContainer');
+            
+            if(committeeId === 'final') {
+                container.innerHTML = `
+                    <a href="${data.diamondLink}" class="resource-link final-resource" target="_blank">💎 Diamond Testler</a>
+                    <a href="${data.modFinalLink}" class="resource-link final-resource" target="_blank" style="border-left-color: var(--mod-deep);">🎯 MOD Final Kaynakları</a>
+                `;
+            } else {
+                data.lessons.forEach(lesson => {
+                    container.innerHTML += `
+                        <div class="lesson-item" onclick="this.classList.toggle('active')">
+                            <div class="lesson-header">
+                                <span>${lesson.icon} ${lesson.name}</span>
+                                <span class="arrow-icon">▼</span>
+                            </div>
+                            <div class="lesson-content">
+                                <a href="${lesson.links.ozet}" target="_blank" class="resource-link">📝 Özet</a>
+                                <a href="${lesson.links.test}" target="_blank" class="resource-link">🎯 Test</a>
+                                <a href="${lesson.links.ai}" target="_blank" class="resource-link">🧠 NotebookLM Odası</a>
+                                <a href="${lesson.links.slayt}" target="_blank" class="resource-link">📊 Slayt</a>
+                            </div>
+                        </div>`;
+                });
+            }
+        };
+    </script>
+</body>
+</html>

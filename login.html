@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MOD App | Giriş</title>
+    <style>
+        :root {
+            --mod-bg: #000000;
+            --mod-accent: #0a9396; /* Logonun yeşili/teal */
+            --mod-deep: #005f73;   /* Logonun laciverti */
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+
+        body {
+            background-color: var(--mod-bg);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* 1. YENİ AURA EFEKTİ (Akan Şeritler / Aurora) */
+        .aura-1 {
+            position: absolute;
+            top: -10%; left: -20%;
+            width: 140%; height: 50vh;
+            background: var(--mod-accent);
+            filter: blur(100px);
+            opacity: 0.35; /* Görünürlük artırıldı */
+            transform: rotate(-15deg);
+            animation: wave 12s infinite alternate ease-in-out;
+            z-index: 0;
+        }
+
+        .aura-2 {
+            position: absolute;
+            bottom: -10%; right: -20%;
+            width: 140%; height: 50vh;
+            background: var(--mod-deep);
+            filter: blur(120px);
+            opacity: 0.45; /* Görünürlük artırıldı */
+            transform: rotate(-15deg);
+            animation: wave-reverse 15s infinite alternate ease-in-out;
+            z-index: 0;
+        }
+
+        @keyframes wave {
+            0% { transform: rotate(-15deg) translateY(0) scale(1); }
+            100% { transform: rotate(-10deg) translateY(-80px) scale(1.1); }
+        }
+
+        @keyframes wave-reverse {
+            0% { transform: rotate(-15deg) translateY(0) scale(1); }
+            100% { transform: rotate(-20deg) translateY(80px) scale(1.1); }
+        }
+
+        /* 2. KALP ATIŞI (PULSE) EFEKTİ */
+        @keyframes pulse-shadow {
+            0% { box-shadow: 0 0 0 0 rgba(10, 147, 150, 0.5); }
+            70% { box-shadow: 0 0 0 12px rgba(10, 147, 150, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(10, 147, 150, 0); }
+        }
+
+        /* 3. CAM PANEL (Glassmorphism) */
+        .login-container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 320px;
+            text-align: center;
+            background: rgba(20, 20, 20, 0.4); /* Arkası daha belirgin cam */
+            padding: 40px 30px;
+            border-radius: 24px;
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        .brand-logo { font-size: 32px; font-weight: 700; color: #FFF; letter-spacing: 2px; margin-bottom: 5px; }
+        .brand-subtitle { color: #86868B; font-size: 13px; margin-bottom: 35px; letter-spacing: 1px; }
+
+        #pinInput {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 14px;
+            padding: 16px;
+            color: #FFF;
+            font-size: 26px;
+            text-align: center;
+            letter-spacing: 12px;
+            outline: none;
+            transition: 0.4s;
+            margin-bottom: 25px;
+        }
+
+        #pinInput:focus { 
+            border-color: var(--mod-accent); 
+            animation: pulse-shadow 2s infinite; 
+            background: rgba(0, 0, 0, 0.6);
+        }
+
+        button {
+            width: 100%;
+            background: var(--mod-deep);
+            color: #FFF;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 14px;
+            padding: 16px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+        }
+
+        button:hover { 
+            background: var(--mod-accent); 
+            transform: translateY(-2px); 
+            box-shadow: 0 10px 20px rgba(10, 147, 150, 0.3);
+        }
+
+        /* 4. FRANSIZCA İMZA KISMI */
+        .footer-note {
+            margin-top: 35px;
+            line-height: 1.8;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            padding-top: 20px;
+        }
+        
+        .footer-note .fr { 
+            font-size: 11px;
+            font-style: italic; 
+            color: var(--mod-accent); 
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+        
+        .footer-note .tr { 
+            font-size: 10px;
+            color: #6e6e73; 
+            letter-spacing: 0.3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="aura-1"></div>
+    <div class="aura-2"></div>
+
+    <div class="login-container">
+        <div class="brand-logo">MOD</div>
+        <div class="brand-subtitle">DÖNEM 2 MERKEZİ</div>
+        
+        <input type="password" id="pinInput" placeholder="PIN" maxlength="4" autocomplete="off">
+        <button onclick="login()">Giriş Yap</button>
+
+        <div class="footer-note">
+            <p class="fr">Conçu pour MOD, le meilleur club étudiant au monde.</p>
+            <p class="tr">Dünyanın en iyi öğrenci kulübü MOD için hazırlandı.</p>
+        </div>
+    </div>
+
+    <script>
+        async function login() {
+            const pin = document.getElementById('pinInput').value;
+            // Şifre: 2727
+            if(pin === "2727") { 
+                window.location.href = 'dashboard.html';
+            } else {
+                const input = document.getElementById('pinInput');
+                input.style.borderColor = "#FF3B30";
+                input.style.transform = 'translateX(-10px)';
+                setTimeout(() => input.style.transform = 'translateX(10px)', 80);
+                setTimeout(() => input.style.transform = 'translateX(0)', 160);
+                input.value = '';
+            }
+        }
+
+        // Enter tuşuyla da giriş yapabilmek için küçük bir ekleme
+        document.getElementById("pinInput").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                login();
+            }
+        });
+    </script>
+</body>
+</html>
